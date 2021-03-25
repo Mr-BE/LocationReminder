@@ -121,6 +121,8 @@ dependencies {
     androidTestImplementation('org.koin:koin-test:2.0.1') { exclude group: 'org.mockito' }
 
 
+    //Timber
+    implementation 'com.jakewharton.timber:timber:4.7.1'
 
     //Maps & Geofencing
     implementation "com.google.android.gms:play-services-location:$playServicesLocationVersion"

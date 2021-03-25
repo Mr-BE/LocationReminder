@@ -4,21 +4,31 @@ package com.udacity.project4.locationreminders.savereminder.selectreminderlocati
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
+import android.util.Log
 import android.view.*
+import android.widget.Button
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.navigation.fragment.NavHostFragment
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.snackbar.Snackbar
+import com.udacity.project4.BuildConfig
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.databinding.FragmentSelectLocationBinding
@@ -37,8 +47,11 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
     private lateinit var map: GoogleMap
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var saveButton: Button
+
 
     private val REQUEST_LOCATION_PERMISSION = 1
+
 
 
 
@@ -57,14 +70,26 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         initMapFragment()
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
+        //set up save button
+         saveButton = binding.locationSaveButton
+        saveButton.visibility = View.GONE
 
-//        TODO: zoom to the user location after taking his permission
-//        TODO: add style to the map
-//        TODO: put a marker to location that the user selected
 
 
-//        TODO: call this function after the user confirms on the selected location
-        onLocationSelected()
+        //observe location selected changes
+        _viewModel.eventHasSelectedLocation.observe(viewLifecycleOwner, Observer { hasSelectedLocation ->
+            if (hasSelectedLocation) {
+                saveButton.visibility = View.VISIBLE
+                saveButton.setOnClickListener {
+                    when(it.id){
+                    R.id.locationSaveButton -> onLocationSelected()
+                    }
+                }
+            }
+        })
+
+
+
 
         return binding.root
     }
@@ -79,17 +104,58 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         if (googleMap != null) {
             map = googleMap
         }
-
-//        val latitude = 4.986773547640699
-//        val longitude = 8.348942111167954
-//        val zoomLevel = 15f
-//
-//        val drillLatLng = LatLng(latitude, longitude)
-//
-//        map.moveCamera(CameraUpdateFactory.newLatLngZoom(drillLatLng, zoomLevel))
+        //add marker
+        setMapClick(map)
 
         //show location
         enableMyLocation()
+    }
+
+    private fun setMapClick(map: GoogleMap?) {
+
+        if (map != null) {
+            map.setOnMapClickListener { latLng ->
+                //add marker
+                map.addMarker(MarkerOptions()
+                        .position(latLng)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)))
+
+                _viewModel.longitude.value = latLng.longitude
+                _viewModel.latitude.value = latLng.latitude
+                _viewModel.reminderSelectedLocationStr.value = "${latLng.longitude}, ${latLng.latitude}"
+                _viewModel.locationSelected()
+            }
+        } else  {
+            Log.e(TAG, "Null Google Map value")
+            Toast.makeText(requireContext(), "No Network Connection Available", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSION_ID) {
+            if (grantResults.isNotEmpty() &&
+                    grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                enableMyLocation()
+            } else {
+                // Display a snackbar explaining that the user needs location permissions in order to
+                // trigger the reminders
+                Snackbar.make(
+                        binding.root,
+                        R.string.permission_denied_explanation,
+                        Snackbar.LENGTH_INDEFINITE
+                )
+                        .setAction(R.string.settings) {
+                            startActivity(Intent().apply {
+                                action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+
+                                data = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
+                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            })
+                        }.show()
+            }
+        }
     }
 
     @SuppressLint("MissingPermission")
@@ -171,6 +237,11 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         //        TODO: When the user confirms on the selected location,
         //         send back the selected location details to the view model
         //         and navigate back to the previous fragment to save the reminder and add the geofence
+
+        NavHostFragment.findNavController(this).popBackStack()
+        _viewModel.locationSelected()
+
+
     }
     private fun requestPermissions() {
         requestPermissions(arrayOf(
@@ -225,6 +296,5 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         }
         return locationEnabled
     }
-
 
 }
