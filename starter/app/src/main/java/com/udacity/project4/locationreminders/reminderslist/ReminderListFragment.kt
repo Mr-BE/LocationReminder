@@ -2,6 +2,7 @@ package com.udacity.project4.locationreminders.reminderslist
 
 import android.os.Bundle
 import android.view.*
+import androidx.annotation.VisibleForTesting
 import androidx.databinding.DataBindingUtil
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
@@ -82,6 +83,22 @@ class ReminderListFragment : BaseFragment() {
         super.onCreateOptionsMenu(menu, inflater)
 //        display logout as menu item
         inflater.inflate(R.menu.main_menu, menu)
+    }
+
+    //Testing functions
+    @VisibleForTesting
+    fun showErrorMessage(errorMessage: String){
+        _viewModel.setShowErrorMessage(errorMessage)
+    }
+
+    @VisibleForTesting
+    fun showToastMessage(message: String) {
+        _viewModel.setShowToastMessage(message)
+    }
+
+    @VisibleForTesting
+    fun showSnackBar(message: String) {
+        _viewModel.setShowSnackBar(message)
     }
 
 }

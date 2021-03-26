@@ -1,6 +1,7 @@
 package com.udacity.project4.locationreminders.reminderslist
 
 import android.app.Application
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.udacity.project4.base.BaseViewModel
@@ -56,5 +57,21 @@ class RemindersListViewModel(
      */
     private fun invalidateShowNoData() {
         showNoData.value = remindersList.value == null || remindersList.value!!.isEmpty()
+    }
+
+    //Testing
+    @VisibleForTesting
+    fun setShowErrorMessage(errorMessage: String) {
+        showErrorMessage.value = errorMessage
+    }
+
+    @VisibleForTesting
+    fun setShowToastMessage(message: String) {
+        showToast.value = message
+    }
+
+    @VisibleForTesting
+    fun setShowSnackBar(message: String) {
+        showSnackBar.value = message
     }
 }
