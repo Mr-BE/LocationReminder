@@ -1,5 +1,6 @@
 package com.udacity.project4.locationreminders.savereminder
 
+import android.app.Application
 import android.content.Context
 import android.os.Build
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
@@ -49,7 +50,7 @@ class SaveReminderViewModelTest {
     private lateinit var saveReminderViewModel: SaveReminderViewModel
 
     private lateinit var fakeDataSource: FakeDataSource
-    private lateinit var context: Context
+    private lateinit var context: Application
 
     //TODO: provide testing to the SaveReminderView and its live data objects
 
