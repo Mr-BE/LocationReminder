@@ -20,17 +20,20 @@ import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
-import com.google.android.gms.location.*
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.*
-import com.google.android.material.button.MaterialButton
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.snackbar.Snackbar
 import com.udacity.project4.BuildConfig
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
+import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentSelectLocationBinding
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
@@ -52,14 +55,11 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
     private val REQUEST_LOCATION_PERMISSION = 1
 
-
-
-
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         binding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_select_location, container, false)
+                DataBindingUtil.inflate(inflater, R.layout.fragment_select_location, container, false)
 
         binding.viewModel = _viewModel
         binding.lifecycleOwner = this
@@ -71,9 +71,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
         //set up save button
-         saveButton = binding.locationSaveButton
+        saveButton = binding.locationSaveButton
         saveButton.visibility = View.GONE
-
 
 
         //observe location selected changes
@@ -81,14 +80,12 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             if (hasSelectedLocation) {
                 saveButton.visibility = View.VISIBLE
                 saveButton.setOnClickListener {
-                    when(it.id){
-                    R.id.locationSaveButton -> onLocationSelected()
+                    when (it.id) {
+                        R.id.locationSaveButton -> onLocationSelected()
                     }
                 }
             }
         })
-
-
 
 
         return binding.root
@@ -125,7 +122,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                 _viewModel.reminderSelectedLocationStr.value = "${latLng.longitude}, ${latLng.latitude}"
                 _viewModel.locationSelected()
             }
-        } else  {
+        } else {
             Log.e(TAG, "Null Google Map value")
             Toast.makeText(requireContext(), "No Network Connection Available", Toast.LENGTH_SHORT).show()
         }
@@ -183,7 +180,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                         }
                     }
             getUserLastLocation()
-        }else{
+        } else {
             ActivityCompat.requestPermissions(
                     requireActivity(),
                     arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
@@ -206,7 +203,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
         if (isForegroundPermissionApproved()) {
             requestPermissions()
-        }else{
+        } else {
             //monitor location changes
             fusedLocationProviderClient.lastLocation
                     .addOnSuccessListener { location: Location? ->
@@ -234,22 +231,21 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
     private fun onLocationSelected() {
-        //        TODO: When the user confirms on the selected location,
+        //         When the user confirms on the selected location,
         //         send back the selected location details to the view model
         //         and navigate back to the previous fragment to save the reminder and add the geofence
 
-        NavHostFragment.findNavController(this).popBackStack()
+//        NavHostFragment.findNavController(this).popBackStack()
+        NavigationCommand.Back
         _viewModel.locationSelected()
-
-
     }
+
     private fun requestPermissions() {
         requestPermissions(arrayOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION),
                 PERMISSION_ID)
     }
-
 
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -280,8 +276,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
     //user permission granted
     private fun isPermissionGranted(): Boolean {
-       return ActivityCompat.checkSelfPermission(requireContext(),
-       Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        return ActivityCompat.checkSelfPermission(requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
     //check user location enabled
