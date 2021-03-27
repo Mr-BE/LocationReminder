@@ -235,8 +235,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         //         send back the selected location details to the view model
         //         and navigate back to the previous fragment to save the reminder and add the geofence
 
-//        NavHostFragment.findNavController(this).popBackStack()
-        NavigationCommand.Back
+        NavHostFragment.findNavController(this).popBackStack()
+//        NavigationCommand.Back
         _viewModel.locationSelected()
     }
 

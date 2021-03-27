@@ -16,6 +16,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -133,6 +134,11 @@ dependencies {
     //Maps & Geofencing
     implementation "com.google.android.gms:play-services-location:$playServicesLocationVersion"
     implementation "com.google.android.gms:play-services-maps:$playServicesVersion"
+
+    //Firebase
+    implementation 'com.firebaseui:firebase-ui-auth:7.1.1'
+
+    implementation 'com.android.support:multidex:1.0.3'
 
 
 }

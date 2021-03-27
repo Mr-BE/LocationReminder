@@ -107,6 +107,5 @@ class RemindersDaoTest {
         reminderDao.deleteAllReminders()
         val deletedList = reminderDao.getReminders()
         assertThat(deletedList.size, Matchers.`is`(0))
-
     }
 }

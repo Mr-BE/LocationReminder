@@ -54,7 +54,7 @@ class RemindersListViewModelTest {
         remindersListViewModel = RemindersListViewModel(context, fakeDataSource)
     }
 
-    //TODO: provide testing to the RemindersListViewModel and its live data objects
+    // provide testing to the RemindersListViewModel and its live data objects
 
     @Test
     fun givenReminder_whenRetrieving_returnNotNull() = mainCoroutineRule.runBlockingTest {
