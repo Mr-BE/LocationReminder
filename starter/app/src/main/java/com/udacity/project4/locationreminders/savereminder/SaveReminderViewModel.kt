@@ -22,8 +22,8 @@ class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSo
     val latitude = MutableLiveData<Double>()
     val longitude = MutableLiveData<Double>()
 
-   private val _eventHasSelectedLocation = MutableLiveData<Boolean>()
-        val eventHasSelectedLocation: LiveData<Boolean>
+    private val _eventHasSelectedLocation = MutableLiveData<Boolean>()
+    val eventHasSelectedLocation: LiveData<Boolean>
         get() = _eventHasSelectedLocation
 
     fun locationSelected() {
@@ -33,6 +33,7 @@ class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSo
     fun doneLocationSelected() {
         _eventHasSelectedLocation.value = false
     }
+
     /**
      * Clear the live data objects to start fresh next time the view model gets called
      */

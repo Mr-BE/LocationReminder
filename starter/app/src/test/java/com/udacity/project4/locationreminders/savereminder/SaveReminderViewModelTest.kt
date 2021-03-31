@@ -52,7 +52,7 @@ class SaveReminderViewModelTest {
     private lateinit var fakeDataSource: FakeDataSource
     private lateinit var context: Application
 
-    //TODO: provide testing to the SaveReminderView and its live data objects
+    //provide testing to the SaveReminderView and its live data objects
 
     //set up viewmodel before test
     @Before

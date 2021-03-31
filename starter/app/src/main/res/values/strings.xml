@@ -45,4 +45,5 @@
     <string name="auth_sign_in_cancelled">Sign in cancelled</string>
     <string name="no_internet_connection">No internet connection</string>
     <string name="unknown_error">It\'s not you, it\'s us. We\'re working on it</string>
+    <string name="reminder_details">Reminder Details</string>
 </resources>
